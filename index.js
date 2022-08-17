@@ -20,7 +20,7 @@ app.use('/person', pessoaRoutes);
 
 // entregar uma porta 
 mongoose
-    .connect('mongodb://localhost:27017')  
+    .connect('mongodb://127.0.0.1:27017')  
     .then(() => {
         console.log('Conectado ao MongoDB!');
         app.listen(27017);

@@ -47,6 +47,15 @@ module.exports = {
     salvar_pessoa: async (req, res) => {
         console.log(req.body);
         try {
+            if (await PessoaModel.findOne({cpf: req.body.cpf})) {
+                res.status(424).json({message: 'CPF informado já foi cadastrado!'});
+                return;
+            }
+            if (await PessoaModel.findOne({celular: req.body.celular})) {
+                res.status(424).json({message: 'Celular informado já foi cadastrado!'});
+                return;
+            }
+
             let pessoa = new PessoaModel({});
             pessoa.nome = req.body.nome;
             pessoa.cpf = req.body.cpf;
