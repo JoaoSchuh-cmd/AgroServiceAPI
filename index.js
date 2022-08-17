@@ -5,11 +5,6 @@ const mongoose = require('mongoose');
 const app = express();
 
 require('./models/Pessoa')
-// const DB_USER = process.env.DB_USER;
-// const DB_PASS = encodeURIComponent(process.env.DB_PASS);
-const DB_USER = 'JoaoSchuh';
-const DB_PASS = encodeURIComponent('Joao24252635');
-
 
 //forma de ler JSON | middlewares
 app.use(
@@ -25,10 +20,10 @@ app.use('/person', pessoaRoutes);
 
 // entregar uma porta 
 mongoose
-    .connect(`mongodb+srv://${DB_USER}:${DB_PASS}@apicluster.md2jir7.mongodb.net/?retryWrites=true&w=majority`)
+    .connect('mongodb://localhost:27017')  
     .then(() => {
         console.log('Conectado ao MongoDB!');
-        app.listen(3000);
+        app.listen(27017);
     })
     .catch((err) => console.log(err));
 

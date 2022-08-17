@@ -32,6 +32,11 @@ module.exports = {
         try {
             let pessoa = await PessoaModel.findOne({ _id: id });
 
+            if (!pessoa) {
+                res.status(422).json({ message: 'Pessoa não encontrada!' });
+                return;
+            }
+
             res.status(200).json(pessoa);
         } catch (error) {
             console.log(error);
@@ -49,7 +54,7 @@ module.exports = {
             pessoa.senha = req.body.senha;
             pessoa.celular = req.body.celular;
 
-            pessoa = await pessoa.save();
+            await PessoaModel.create(pessoa);
 
             res.status(201).json({
                 message: 'Pessoa salva com sucesso!',
@@ -65,11 +70,18 @@ module.exports = {
     },
 
     atualizar_pessoa_info: async (req, res) => {
-        const id = req.params.PessoaId;
+        const id = req.params.id;
+
+        let oldPessoa = await PessoaModel.findOne({ _id: id });
+
+        if (!oldPessoa) {
+            res.status(422).json({ message: 'Pessoa não encontrada' });
+            return;
+        }
 
         const { nome, cpf, usuario, senha, celular } = req.body;
 
-        const pessoa = {
+        let newPessoa = {
             nome,
             cpf,
             usuario,
@@ -78,7 +90,7 @@ module.exports = {
         }
 
         try {
-            let pessoaAtualizada = await PessoaModel.updateOne({ _id: id }, pessoa);
+            let pessoaAtualizada = await PessoaModel.updateOne(oldPessoa, newPessoa);
 
             if (!pessoaAtualizada) {
                 res.status(422).json({ error: 'Usuario não encontrado' });
@@ -95,10 +107,22 @@ module.exports = {
     },
 
     excluir_pessoa: async (req, res) => {
-        const id = req.params.PessoaId;
+        const id = req.params.id;
 
         try {
-            let status = await PessoaModel.deleteOne({ _id: id });
+            const pessoa = await PessoaModel.findOne({ _id: id });
+
+            if (!pessoa) {
+                res.status(422).json({ message: 'Pessoa não encontrada' });
+                return;
+            }
+
+            let status = await PessoaModel.deleteOne(pessoa);
+
+            if (status.deletedCount === 0) {
+                res.status(424).json({ message: 'Não foi possível deletar o usuário informado' });
+                return;
+            }
 
             res.status(200).json({
                 message: 'Pessoa Deletada!',
