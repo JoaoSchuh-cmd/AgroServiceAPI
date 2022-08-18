@@ -30,6 +30,10 @@ module.exports = {
     get_anuncios_usuario: async (req, res) => {
         const userId = req.params.id;
 
+        if (!await PessoaModel.findOne({ _id: id })) {
+            res.status(422).json({ message: 'Pessoa não encontrada' });
+            return;
+        }
         try {
             let anuncios = await AnuncioModel
                 .find({ id_usuario: userId })
@@ -143,5 +147,33 @@ module.exports = {
 
     get_filtered_anuncios: async (req, res) => {
         //TODO
+        const tipoServico = req.params.tipoServico;
+        const valorHr = req.params.valorHr;
+        const dataInicial = req.params.dataInicial;
+        const dataFinal = req.params.dataFinal;
+        const cidade = req.params.cidade;
+        const estado = req.params.estado;
+
+        // const servicos = await ServicoModel.find({
+        //     id_servico: await ServicoModel.find(async (filtros) => {
+        //         if (tipoServico != '?')
+        //             id_tipo_servico: tipoServico
+        //         if (valorHr != '?')
+        //             valorHora: valorHr
+        //         if (dataInicial != '?')
+        //             data_inicial: dataInicial
+        //         if (dataFinal != '?')
+        //             data_final: dataFinal
+        //     })
+        // })
+
+        // const enderecos = await EnderecoModel.find(async (filtros) => {
+        //     if (cidade != '?')
+        //         cidade: cidade
+        //     if (estado != '?')
+        //         estado: estado
+        // })
+
+        // let anuncios = await AnuncioModel.find(servicos, enderecos);
     }
 }

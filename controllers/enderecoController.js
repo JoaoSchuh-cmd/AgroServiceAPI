@@ -26,7 +26,26 @@ module.exports = {
         const id = req.params.id
 
         try {
-            
+            if (!await EnderecoModel.findOne({ _id: id })) {
+                res.status(422).json({ message: 'Endereço não encontrado' });
+                return;
+            }
+
+            const { cidade, estado, cep, info_adicional } = req.body;
+
+            const newEndereco = {
+                cidade,
+                estado,
+                cep,
+                info_adicional
+            }
+
+            const updatedEndereco = await EnderecoModel.updateOne({ _id: id }, newEndereco);
+        
+            if (updatedEndereco.modifiedCount === 0) 
+                res.status(424).json({message: 'Nenhum dado foi alterado'})
+
+            res.status(200).json({message: 'Endereço atualizado', endereco: updatedEndereco})
         } catch (error) {
             console.log(error);
             res.status(500).json(error);
@@ -53,7 +72,7 @@ module.exports = {
         const id = req.params.id;
 
         try {
-            let endereco = await EnderecoModel.findOne({ _id: id });
+            let endereco = await EnderecoModel.deleteOne({ _id: id });
 
             if (!endereco) {
                 res.status(422).json({ error: 'Não foi encontrado o endereço!' });

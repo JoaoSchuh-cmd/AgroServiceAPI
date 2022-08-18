@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const servicoSchema = mongoose.Schema({
+let servicoSchema = mongoose.Schema({
     id_tipo_servico: { type: mongoose.Schema.Types.ObjectId, ref: 'Endereco' },
     descricao: { type: String },
     data_inicio: { type: Date, required: true },

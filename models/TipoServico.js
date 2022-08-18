@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const TipoServico = mongoose.model('TipoServico', {
+let TipoServico = mongoose.model('TipoServico', {
     nome: String,
 });
 
