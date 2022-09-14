@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 let servicoSchema = mongoose.Schema({
+    id: { type: Number },
     id_tipo_servico: { type: mongoose.Schema.Types.ObjectId, ref: 'Endereco' },
     descricao: { type: String },
     data_inicio: { type: Date, required: true },

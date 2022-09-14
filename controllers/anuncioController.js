@@ -14,6 +14,7 @@ module.exports = {
                 count: anuncios.length,
                 anuncios: anuncios.map(anuncio => {
                     return {
+                        id: anuncio.id,
                         usuario: anuncio.id_usuario,
                         servico: anuncio.id_servico,
                         endereco: anuncio.id_endereco,
@@ -30,7 +31,7 @@ module.exports = {
     get_anuncios_usuario: async (req, res) => {
         const userId = req.params.id;
 
-        if (!await PessoaModel.findOne({ _id: id })) {
+        if (!await PessoaModel.findOne({ id: id })) {
             res.status(422).json({ message: 'Pessoa não encontrada' });
             return;
         }
@@ -51,9 +52,9 @@ module.exports = {
 
     salvar_anuncio: async (req, res) => {
         try {
-            let servico = await ServicoModel.findOne({ _id: req.body.id_servico });
-            let endereco = await EnderecoModel.findOne({ _id: req.body.id_endereco });
-            let pessoa = await PessoaModel.findOne({ _id: req.body.id_pessoa });
+            let servico = await ServicoModel.findOne({ id: req.body.id_servico });
+            let endereco = await EnderecoModel.findOne({ id: req.body.id_endereco });
+            let pessoa = await PessoaModel.findOne({ id: req.body.id_pessoa });
 
             if (!servico) {
                 res.status(404).json({ message: 'Serviço não existe' })
@@ -79,6 +80,7 @@ module.exports = {
                 message: 'Anuncio salvo com sucesso!',
                 createdAnuncio: {
                     _id: anuncio._id,
+                    id: anuncio.id,
                     id_servico: anuncio.id_servico,
                     id_endereco: anuncio.id_endereco,
                     id_pessoa: anuncio.id_pessoa
@@ -91,18 +93,19 @@ module.exports = {
     },
 
     atualizar_anuncio: async (req, res) => {
-        const id = req.params.id;
+        const _id = req.params.id;
 
-        const { id_endereco, id_pessoa, id_servico } = req.body;
+        const { id, id_endereco, id_pessoa, id_servico } = req.body;
 
         const anuncio = {
+            id,
             id_endereco,
             id_pessoa,
             id_servico
         }
 
         try {
-            let anuncioAtualizado = await AnuncioModel.updateOne({ _id: id }, anuncio);
+            let anuncioAtualizado = await AnuncioModel.updateOne({ id: _id }, anuncio);
 
             if (!anuncioAtualizado) {
                 res.status(422).json({ error: 'Anúncio não encontrado' });
@@ -115,7 +118,7 @@ module.exports = {
 
             req.status(200).json({
                 message: 'Anuncio atualizado',
-                _id: anuncioAtualizado._id
+                id: anuncioAtualizado.id
             })
 
         } catch (error) {
@@ -128,7 +131,7 @@ module.exports = {
         try {
             const id = req.params.id;
 
-            const anuncio = await AnuncioModel.deleteOne({ _id: id });
+            const anuncio = await AnuncioModel.deleteOne({ id: id });
 
             if (!anuncio) {
                 res.status(422).json({ error: 'Anúncio não encontrado' });
@@ -137,7 +140,7 @@ module.exports = {
 
             req.status(200).json({
                 message: 'Pessoa deletada',
-                _id: anuncio._id
+                id: anuncio._id
             })
         } catch (error) {
             console.log(error);

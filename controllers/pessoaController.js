@@ -10,6 +10,7 @@ module.exports = {
                 count: pessoas.length,
                 pessoas: pessoas.map(pessoa => {
                     return {
+                        id: pessoa.id,
                         nome: pessoa.nome,
                         cpf: pessoa.cpf,
                         usuario: pessoa.usuario,
@@ -30,7 +31,7 @@ module.exports = {
         const id = req.params.id;
 
         try {
-            let pessoa = await PessoaModel.findOne({ _id: id });
+            let pessoa = await PessoaModel.findOne({ id: id });
 
             if (!pessoa) {
                 res.status(422).json({ message: 'Pessoa não encontrada!' });
@@ -47,16 +48,17 @@ module.exports = {
     salvar_pessoa: async (req, res) => {
         console.log(req.body);
         try {
-            if (await PessoaModel.findOne({cpf: req.body.cpf})) {
-                res.status(424).json({message: 'CPF informado já foi cadastrado!'});
+            if (await PessoaModel.findOne({ cpf: req.body.cpf })) {
+                res.status(424).json({ message: 'CPF informado já foi cadastrado!' });
                 return;
             }
-            if (await PessoaModel.findOne({celular: req.body.celular})) {
-                res.status(424).json({message: 'Celular informado já foi cadastrado!'});
+            if (await PessoaModel.findOne({ celular: req.body.celular })) {
+                res.status(424).json({ message: 'Celular informado já foi cadastrado!' });
                 return;
             }
 
             let pessoa = new PessoaModel({});
+            pessoa.id = req.body.id;
             pessoa.nome = req.body.nome;
             pessoa.cpf = req.body.cpf;
             pessoa.usuario = req.body.usuario;
@@ -68,8 +70,8 @@ module.exports = {
             res.status(201).json({
                 message: 'Pessoa salva com sucesso!',
                 createdPessoa: {
+                    id: pessoa.id,
                     nome: pessoa.nome,
-                    _id: pessoa._id,
                 }
             })
         } catch (err) {
@@ -79,18 +81,19 @@ module.exports = {
     },
 
     atualizar_pessoa_info: async (req, res) => {
-        const id = req.params.id;
+        const _id = req.params.id;
 
-        let oldPessoa = await PessoaModel.findOne({ _id: id });
+        let oldPessoa = await PessoaModel.findOne({ id: _id });
 
         if (!oldPessoa) {
             res.status(422).json({ message: 'Pessoa não encontrada' });
             return;
         }
 
-        const { nome, cpf, usuario, senha, celular } = req.body;
+        const { id, nome, cpf, usuario, senha, celular } = req.body;
 
         let newPessoa = {
+            id,
             nome,
             cpf,
             usuario,
@@ -119,7 +122,7 @@ module.exports = {
         const id = req.params.id;
 
         try {
-            const pessoa = await PessoaModel.findOne({ _id: id });
+            const pessoa = await PessoaModel.findOne({ id: id });
 
             if (!pessoa) {
                 res.status(422).json({ message: 'Pessoa não encontrada' });
