@@ -9,7 +9,10 @@ router.post('/', controllerPessoa.salvar_pessoa);
 router.get('/', controllerPessoa.get_all_pessoas);
 
 // read - busca de pessoa
-router.get('/:id', controllerPessoa.get_pessoa);
+router.get('/id=:id', controllerPessoa.get_pessoa);
+
+// read - busca de pessoa pelo nome de usuário
+router.get('/username=:username', controllerPessoa.get_pessoaByUsername);
 
 // update - atualizar os dados (PUT, PATCH) PUT = espera o objeto completo, PATCH = atualizacao parcial
 router.patch('/:id', controllerPessoa.atualizar_pessoa_info);

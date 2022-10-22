@@ -37,9 +37,10 @@ app.use('/tipoServico', tipoServicoRoutes);
 // entregar uma porta s
 mongoose
     .connect('mongodb://127.0.0.1:27017')
+    // .connect('mongodb+srv://JoaoSchuh:Joao24252635@apicluster.md2jir7.mongodb.net/test')
     .then(() => {
         console.log('Conectado ao MongoDB!');
-        app.listen(27017);
+        app.listen(3000);
     })
     .catch((err) => console.log(err));
 

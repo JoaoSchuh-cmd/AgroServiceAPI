@@ -7,9 +7,9 @@ module.exports = {
             const pessoas = await PessoaModel.find({}).select("nome cpf usuario senha celular");
             console.log(pessoas);
             res.status(200).json({
-                count: pessoas.length,
                 pessoas: pessoas.map(pessoa => {
                     return {
+                        id: pessoa.id,
                         nome: pessoa.nome,
                         cpf: pessoa.cpf,
                         usuario: pessoa.usuario,
@@ -27,13 +27,13 @@ module.exports = {
     },
 
     get_pessoa: async (req, res) => {
-        const id = req.params.id;
+        const _id = req.params.id;
 
         try {
-            let pessoa = await PessoaModel.findOne({ _id: id });
+            let pessoa = await PessoaModel.findOne({ id: _id });
 
             if (!pessoa) {
-                res.status(422).json({ message: 'Pessoa não encontrada!' });
+                res.status(422).json({});
                 return;
             }
 
@@ -44,19 +44,39 @@ module.exports = {
         }
     },
 
+    get_pessoaByUsername: async (req, res) => {
+        const username = req.params.username;
+
+        try {
+            let pessoa = await PessoaModel.findOne({ usuario: username });
+
+            if (!pessoa) {
+                console.log(res.status(422).json({ message: "Usuário não encontrado!" }));
+                return;
+            }
+
+            res.status(200).json(pessoa);
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(error);
+        }
+    },
+
     salvar_pessoa: async (req, res) => {
         console.log(req.body);
         try {
-            if (await PessoaModel.findOne({cpf: req.body.cpf})) {
-                res.status(424).json({message: 'CPF informado já foi cadastrado!'});
+            if (await PessoaModel.findOne({ cpf: req.body.cpf })) {
+                res.status(424).json({ message: 'CPF informado já foi cadastrado!' });
                 return;
             }
-            if (await PessoaModel.findOne({celular: req.body.celular})) {
-                res.status(424).json({message: 'Celular informado já foi cadastrado!'});
+            if (await PessoaModel.findOne({ celular: req.body.celular })) {
+                res.status(424).json({ message: 'Celular informado já foi cadastrado!' });
                 return;
             }
 
             let pessoa = new PessoaModel({});
+            pessoa.id = req.body.id;
             pessoa.nome = req.body.nome;
             pessoa.cpf = req.body.cpf;
             pessoa.usuario = req.body.usuario;
@@ -68,8 +88,8 @@ module.exports = {
             res.status(201).json({
                 message: 'Pessoa salva com sucesso!',
                 createdPessoa: {
-                    nome: pessoa.nome,
-                    _id: pessoa._id,
+                    id: pessoa.id,
+                    nome: pessoa.nome
                 }
             })
         } catch (err) {
@@ -79,18 +99,19 @@ module.exports = {
     },
 
     atualizar_pessoa_info: async (req, res) => {
-        const id = req.params.id;
+        const _id = req.params.id;
 
-        let oldPessoa = await PessoaModel.findOne({ _id: id });
+        let oldPessoa = await PessoaModel.findOne({ id: _id });
 
         if (!oldPessoa) {
             res.status(422).json({ message: 'Pessoa não encontrada' });
             return;
         }
 
-        const { nome, cpf, usuario, senha, celular } = req.body;
+        const { id, nome, cpf, usuario, senha, celular } = req.body;
 
         let newPessoa = {
+            id,
             nome,
             cpf,
             usuario,
@@ -116,10 +137,10 @@ module.exports = {
     },
 
     excluir_pessoa: async (req, res) => {
-        const id = req.params.id;
+        const _id = req.params.id;
 
         try {
-            const pessoa = await PessoaModel.findOne({ _id: id });
+            const pessoa = await PessoaModel.findOne({ id: _id });
 
             if (!pessoa) {
                 res.status(422).json({ message: 'Pessoa não encontrada' });
